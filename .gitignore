@@ -15,7 +15,6 @@ __pycache__/
 *.egg-info/
 .env
 .venv/
-db.sqlite3
 
 # VS Code
 .vscode/

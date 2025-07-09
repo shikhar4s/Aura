@@ -23,11 +23,18 @@ This project uses Django for the backend and React for the frontend.
     ```bash
     pip install -r requirements.txt
     ```
-4. Apply migrations:
-    ```bash
-    python manage.py migrate
-    ```
-5. Start the Django server:
+4. Generate a free Gemini API key:
+    - Visit [Google AI Studio](https://aistudio.google.com/app/apikey) and sign in with your Google account.
+    - Click "Create API key" and copy the generated key.
+
+5. Add the Gemini API key to a `.env` file in the plant_disease_detector directory which is backend directory:
+    - Create a file named `.env` (if it doesn't exist).
+    - Add the following line, replacing with your actual key:
+      ```
+      GEMINI_API_KEY = 'Your Gemini API Key Here'
+      ```
+
+6. Start the Django server:
     ```bash
     python manage.py runserver
     ```

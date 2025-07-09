@@ -4,7 +4,6 @@ from .views import (
     AnalysisHistoryView,
     AnalyticsDashboardView,
 )
-# You might also have your auth views (Register, Login) imported here
 
 urlpatterns = [
     # Main endpoint for analyzing an image
@@ -15,8 +14,4 @@ urlpatterns = [
 
     # Endpoint for the analytics dashboard data
     path('analytics/', AnalyticsDashboardView.as_view(), name='analytics-dashboard'),
-    
-    # ... add your other auth paths here if they belong to this app
-    # path('auth/register/', RegisterView.as_view(), name='register'),
-    # path('auth/login/', LoginView.as_view(), name='login'),
 ]

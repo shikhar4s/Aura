@@ -1,0 +1,124 @@
+{
+  "app": {
+    "title": "PlantDoc",
+    "subtitle": "AI-Powered Plant Disease Detection"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account",
+      "email": "Email Address",
+      "password": "Password",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join PlantDoc today",
+      "name": "Full Name",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "namePlaceholder": "Enter your full name",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "createAccount": "Create Account",
+      "creatingAccount": "Creating Account...",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "upload": "Upload Image",
+      "history": "History",
+      "analytics": "Analytics",
+      "profile": "Profile",
+      "contact": "Contact Us",
+      "logout": "Logout"
+    },
+    "upload": {
+      "title": "Plant Disease Detection",
+      "subtitle": "Upload an image of your plant to detect diseases and get treatment recommendations",
+      "dropZone": "Drop your plant image here",
+      "browseText": "or click to browse from your computer",
+      "supportedFormats": "Supports: JPG, PNG, JPEG (Max 10MB)",
+      "chooseFile": "Choose File",
+      "analyzing": "Analyzing Image...",
+      "analyzingSubtext": "Our AI is examining your plant for diseases",
+      "noAnalysis": "No Analysis Yet",
+      "noAnalysisSubtext": "Upload a plant image to see detection results"
+    },
+    "history": {
+      "title": "Upload History",
+      "subtitle": "View your previous plant disease analysis results",
+      "noHistory": "No History Yet",
+      "noHistorySubtext": "Start uploading plant images to see your analysis history",
+      "view": "View",
+      "severity": "Severity"
+    },
+    "analytics": {
+      "title": "Analytics Dashboard",
+      "subtitle": "Insights from your plant disease detection history",
+      "noData": "No Data Available",
+      "noDataSubtext": "Upload and analyze plant images to see your analytics",
+      "totalUploads": "Total Uploads",
+      "analyzed": "Analyzed",
+      "successRate": "Success Rate",
+      "avgConfidence": "Avg Confidence",
+      "diseaseDistribution": "Disease Distribution",
+      "severityDistribution": "Severity Distribution"
+    },
+    "profile": {
+      "title": "Profile Settings",
+      "subtitle": "Manage your account information and preferences",
+      "personalInfo": "Personal Information",
+      "editProfile": "Edit Profile",
+      "save": "Save",
+      "cancel": "Cancel",
+      "changePhoto": "Change Photo",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "signOut": "Sign Out",
+      "accountStats": "Account Stats",
+      "memberSince": "Member Since",
+      "preferences": "Preferences",
+      "emailNotifications": "Email Notifications",
+      "analysisAlerts": "Analysis Alerts",
+      "monthlyReports": "Monthly Reports"
+    },
+    "contact": {
+      "title": "Contact Our Team",
+      "subtitle": "Get in touch with our development team",
+      "teamMembers": "Team Members",
+      "contact": "Contact",
+      "getInTouch": "Get in Touch",
+      "getInTouchSubtext": "Have questions or feedback? We'd love to hear from you!"
+    }
+  },
+  "result": {
+    "title": "Analysis Results",
+    "severity": "Severity",
+    "confidence": "Confidence",
+    "recoveryTime": "Expected recovery time",
+    "treatment": "Recommended Treatment",
+    "prevention": "Prevention Tips",
+    "gotIt": "Got it, thanks!"
+  },
+  "chatbot": {
+    "title": "AI Assistant",
+    "subtitle": "Farming & Plant Care Expert",
+    "placeholder": "Ask about plant care...",
+    "greeting": "Hello! I'm your AI farming assistant. I can help you with plant disease diagnosis, treatment recommendations, and general farming advice. How can I assist you today?"
+  },
+  "common": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  }
+}

@@ -8,7 +8,7 @@ from django.db.models import Avg, Count
 from django.db import transaction
 
 # Import your services and models
-# from .services.model_service import plant_disease_model_service
+from .services.model_service import model_service
 from .services.gemini_service import gemini_service
 from .models import AnalysisResult
 from users.models import User
@@ -48,17 +48,12 @@ class AnalyzePlantView(APIView):
         user = request.user
 
         # 1. Predict disease using the PyTorch model
-        # prediction = plant_disease_model_service.predict(image_file)
-        # if not prediction:
-        #     return Response(
-        #         {"error": "Failed to analyze the image."},
-        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        #     )
-
-        prediction = {
-            "disease": "Tomato___Late_blight",
-            "confidence": 0.89
-        }
+        prediction = model_service.predict(image_file)
+        if not prediction:
+            return Response(
+                {"error": "Failed to analyze the image."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         # 2. Get treatment info from Gemini
         treatment_info = gemini_service.get_treatment_info(prediction['disease'], language=language)

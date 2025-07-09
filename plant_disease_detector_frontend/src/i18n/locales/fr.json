@@ -1,0 +1,124 @@
+{
+  "app": {
+    "title": "PlantDoc",
+    "subtitle": "Détection de Maladies des Plantes par IA"
+  },
+  "auth": {
+    "login": {
+      "title": "Bon Retour",
+      "subtitle": "Connectez-vous à votre compte",
+      "email": "Adresse Email",
+      "password": "Mot de Passe",
+      "emailPlaceholder": "Entrez votre email",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "signIn": "Se Connecter",
+      "signingIn": "Connexion en cours...",
+      "noAccount": "Pas de compte?",
+      "signUp": "S'inscrire"
+    },
+    "signup": {
+      "title": "Créer un Compte",
+      "subtitle": "Rejoignez PlantDoc aujourd'hui",
+      "name": "Nom Complet",
+      "email": "Adresse Email",
+      "password": "Mot de Passe",
+      "confirmPassword": "Confirmer le Mot de Passe",
+      "namePlaceholder": "Entrez votre nom complet",
+      "emailPlaceholder": "Entrez votre email",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "createAccount": "Créer un Compte",
+      "creatingAccount": "Création du compte...",
+      "haveAccount": "Déjà un compte?",
+      "signIn": "Se connecter"
+    }
+  },
+  "dashboard": {
+    "sidebar": {
+      "upload": "Télécharger Image",
+      "history": "Historique",
+      "analytics": "Analyses",
+      "profile": "Profil",
+      "contact": "Nous Contacter",
+      "logout": "Déconnexion"
+    },
+    "upload": {
+      "title": "Détection de Maladies des Plantes",
+      "subtitle": "Téléchargez une image de votre plante pour détecter les maladies et obtenir des recommandations de traitement",
+      "dropZone": "Déposez l'image de votre plante ici",
+      "browseText": "ou cliquez pour parcourir depuis votre ordinateur",
+      "supportedFormats": "Supporte: JPG, PNG, JPEG (Max 10MB)",
+      "chooseFile": "Choisir un Fichier",
+      "analyzing": "Analyse de l'Image...",
+      "analyzingSubtext": "Notre IA examine votre plante pour détecter les maladies",
+      "noAnalysis": "Pas d'Analyse Encore",
+      "noAnalysisSubtext": "Téléchargez une image de plante pour voir les résultats de détection"
+    },
+    "history": {
+      "title": "Historique des Téléchargements",
+      "subtitle": "Consultez vos résultats d'analyse précédents de maladies des plantes",
+      "noHistory": "Pas d'Historique Encore",
+      "noHistorySubtext": "Commencez à télécharger des images de plantes pour voir votre historique d'analyse",
+      "view": "Voir",
+      "severity": "Sévérité"
+    },
+    "analytics": {
+      "title": "Tableau de Bord d'Analyses",
+      "subtitle": "Aperçus de votre historique de détection de maladies des plantes",
+      "noData": "Aucune Donnée Disponible",
+      "noDataSubtext": "Téléchargez et analysez des images de plantes pour voir vos analyses",
+      "totalUploads": "Téléchargements Totaux",
+      "analyzed": "Analysées",
+      "successRate": "Taux de Réussite",
+      "avgConfidence": "Confiance Moyenne",
+      "diseaseDistribution": "Distribution des Maladies",
+      "severityDistribution": "Distribution de Sévérité"
+    },
+    "profile": {
+      "title": "Paramètres du Profil",
+      "subtitle": "Gérez les informations de votre compte et vos préférences",
+      "personalInfo": "Informations Personnelles",
+      "editProfile": "Modifier le Profil",
+      "save": "Sauvegarder",
+      "cancel": "Annuler",
+      "changePhoto": "Changer la Photo",
+      "fullName": "Nom Complet",
+      "emailAddress": "Adresse Email",
+      "signOut": "Se Déconnecter",
+      "accountStats": "Statistiques du Compte",
+      "memberSince": "Membre Depuis",
+      "preferences": "Préférences",
+      "emailNotifications": "Notifications Email",
+      "analysisAlerts": "Alertes d'Analyse",
+      "monthlyReports": "Rapports Mensuels"
+    },
+    "contact": {
+      "title": "Contactez Notre Équipe",
+      "subtitle": "Entrez en contact avec notre équipe de développement",
+      "teamMembers": "Membres de l'Équipe",
+      "contact": "Contact",
+      "getInTouch": "Entrer en Contact",
+      "getInTouchSubtext": "Des questions ou des commentaires? Nous aimerions vous entendre!"
+    }
+  },
+  "result": {
+    "title": "Résultats de l'Analyse",
+    "severity": "Sévérité",
+    "confidence": "Confiance",
+    "recoveryTime": "Temps de récupération attendu",
+    "treatment": "Traitement Recommandé",
+    "prevention": "Conseils de Prévention",
+    "gotIt": "Compris, merci!"
+  },
+  "chatbot": {
+    "title": "Assistant IA",
+    "subtitle": "Expert en Agriculture et Soins des Plantes",
+    "placeholder": "Demandez sur les soins des plantes...",
+    "greeting": "Bonjour! Je suis votre assistant agricole IA. Je peux vous aider avec le diagnostic des maladies des plantes, les recommandations de traitement et les conseils généraux d'agriculture. Comment puis-je vous aider aujourd'hui?"
+  },
+  "common": {
+    "low": "Faible",
+    "medium": "Moyen",
+    "high": "Élevé"
+  }
+}

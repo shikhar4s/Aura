@@ -1,55 +1,30 @@
-# plant_doctor_ai/services/model_service.py
+# predictor/model_service.py
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision import transforms
+import torchvision.transforms as transforms
 from PIL import Image
+import json
 import os
-from django.conf import settings
+from django.conf import settings # Import Django settings
 
-# --- IMPORTANT ---
-# This list MUST match the order of classes your model was trained on.
-# You can get this from `train_dataset.classes` in your notebook.
-# Example: ['Pepper__bell___Bacterial_spot', 'Pepper__bell___healthy', 'Potato___Early_blight', ...]
-PLANT_DISEASE_CLASSES = [
-    'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy', 
-    'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy', 
-    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot', 'Corn_(maize)___Common_rust_', 
-    'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy', 'Grape___Black_rot', 
-    'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)', 'Grape___healthy', 
-    'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot', 'Peach___healthy', 
-    'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy', 'Potato___Early_blight', 
-    'Potato___Late_blight', 'Potato___healthy', 'Raspberry___healthy', 'Soybean___healthy', 
-    'Squash___Powdery_mildew', 'Strawberry___Leaf_scorch', 'Strawberry___healthy', 
-    'Tomato___Bacterial_spot', 'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold', 
-    'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite', 
-    'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus', 
-    'Tomato___healthy'
-]
+# =====================================================================================
+# === Step 1: Model Class Definitions ===
+# These must exactly match the definitions in your training/saving script.
+# =====================================================================================
 
+def accuracy(outputs, labels):
+    _, preds = torch.max(outputs, dim=1)
+    return torch.tensor(torch.sum(preds == labels).item() / len(preds))
 
-# Define the model architecture EXACTLY as in your training script
 class ImageClassificationBase(nn.Module):
-    def training_step(self, batch):
-        images, labels = batch
-        out = self(images)
-        loss = F.cross_entropy(out, labels)
-        return loss
+    # These methods are not used during inference but are needed for the class structure.
+    def training_step(self, batch): pass
+    def validation_step(self, batch): pass
+    def validation_epoch_end(self, outputs): pass
+    def epoch_end(self, epoch, result): pass
 
-    def validation_step(self, batch):
-        images, labels = batch
-        out = self(images)
-        loss = F.cross_entropy(out, labels)
-        acc = self.accuracy(out, labels)
-        return {'val_loss': loss.detach(), 'val_acc': acc}
-    
-    # Simple accuracy function
-    def accuracy(self, outputs, labels):
-        _, preds = torch.max(outputs, dim=1)
-        return torch.tensor(torch.sum(preds == labels).item() / len(preds))
-
-# convolution block with BatchNormalization
 def ConvBlock(in_channels, out_channels, pool=False):
     layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
              nn.BatchNorm2d(out_channels),
@@ -58,7 +33,6 @@ def ConvBlock(in_channels, out_channels, pool=False):
         layers.append(nn.MaxPool2d(4))
     return nn.Sequential(*layers)
 
-# resnet architecture
 class CNN_NeuralNet(ImageClassificationBase):
     def __init__(self, in_channels, num_diseases):
         super().__init__()
@@ -82,56 +56,118 @@ class CNN_NeuralNet(ImageClassificationBase):
         out = self.classifier(out)
         return out
 
-class PlantDiseaseModel:
+# =====================================================================================
+# === Step 2: The Model Service (Singleton Pattern) ===
+# This class handles loading and inference using Django's settings.
+# =====================================================================================
+
+class ModelService:
     _instance = None
 
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(PlantDiseaseModel, cls).__new__(cls, *args, **kwargs)
-            cls._instance._load_model()
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ModelService, cls).__new__(cls)
+            cls._instance.initialize()
         return cls._instance
 
-    def _load_model(self):
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        model_path = os.path.join(settings.BASE_DIR, 'cnn_model_full.pth')
+    def initialize(self):
+        """
+        Loads model artifacts from the 'deployment_artifacts' folder
+        in the project's base directory.
+        """
+        print("Initializing model service...")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        self.model = CNN_NeuralNet(3, len(PLANT_DISEASE_CLASSES))
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
-        self.model.to(self.device)
-        self.model.eval() # Set model to evaluation mode
+        # --- KEY CHANGE: Use settings.BASE_DIR to build the path ---
+        artifacts_dir = os.path.join(settings.BASE_DIR, 'deployment_artifacts')
+        model_path = os.path.join(artifacts_dir, 'plant_disease_model.pth')
+        classes_path = os.path.join(artifacts_dir, 'class_names.json')
 
-        # Define the same transformations used during training/validation
-        # Standard size for many CNNs. Adjust if your model was trained differently.
-        self.transform = transforms.Compose([
+        # Check if the artifact directory exists
+        if not os.path.isdir(artifacts_dir):
+            raise FileNotFoundError(
+                f"The 'deployment_artifacts' directory was not found at {artifacts_dir}. "
+                "Please ensure it is in your project's root directory (next to manage.py)."
+            )
+
+        # Load class names from the JSON file
+        try:
+            with open(classes_path, 'r') as f:
+                self.class_names = json.load(f)
+            num_classes = len(self.class_names)
+            print(f"✅ Loaded {num_classes} class names.")
+        except FileNotFoundError:
+            raise RuntimeError(f"Class names file not found at {classes_path}")
+
+        # Instantiate the model architecture
+        self.model = CNN_NeuralNet(in_channels=3, num_diseases=num_classes)
+        
+        # Load the saved state dictionary into the model
+        try:
+            self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        except FileNotFoundError:
+             raise RuntimeError(f"Model state_dict not found at {model_path}")
+
+        # Set the model to the correct device and evaluation mode
+        self.model.to(self.device)
+        self.model.eval()
+        
+        print(f"✅ Model loaded successfully on device: {self.device}")
+
+    def _preprocess_image(self, image_file):
+        """Transforms an uploaded image file into a tensor for the model."""
+        transform = transforms.Compose([
             transforms.Resize((256, 256)),
-            transforms.ToTensor(),
-            # You might need normalization if you used it during training
-            # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            transforms.ToTensor()
         ])
-        print("✅ PyTorch Model loaded and ready.")
+        image = Image.open(image_file).convert('RGB')
+        return transform(image).unsqueeze(0)
 
     def predict(self, image_file):
-        try:
-            image = Image.open(image_file).convert('RGB')
-            image_tensor = self.transform(image).unsqueeze(0).to(self.device)
+        """
+        Performs inference on a single image file.
+
+        Args:
+            image_file: A file-like object (e.g., from request.FILES).
+
+        Returns:
+            dict: A dictionary containing the predicted disease name and the
+                  confidence score as a float.
+                  e.g., {"disease": "Tomato___Late_blight", "confidence": 0.89}
+        """
+        # Preprocess the image and get the tensor
+        tensor = self._preprocess_image(image_file).to(self.device)
+
+        with torch.no_grad():
+            # 1. Get the raw model output (logits)
+            outputs = self.model(tensor)
+
+            # 2. Apply Softmax to get probabilities
+            # The outputs are raw scores (logits). Softmax converts them to probabilities.
+            probabilities = F.softmax(outputs, dim=1)
             
-            with torch.no_grad():
-                outputs = self.model(image_tensor)
-                probabilities = F.softmax(outputs, dim=1)[0]
-                
-                # Get top prediction
-                confidence, predicted_idx = torch.max(probabilities, 0)
-                
-                disease_name = PLANT_DISEASE_CLASSES[predicted_idx.item()]
-                confidence_score = confidence.item()
+            # 3. Get the top probability and its corresponding class index
+            # torch.max returns a tuple of (max_value, max_indices)
+            confidence, predicted_idx = torch.max(probabilities, 1)
 
-            return {
-                'disease': disease_name,
-                'confidence': confidence_score
-            }
-        except Exception as e:
-            print(f"Error during prediction: {e}")
-            return None
+            # 4. Map the index to the class name
+            predicted_class = self.class_names[predicted_idx.item()]
+            
+            # 5. Format the confidence score
+            # .item() extracts the scalar value from the tensor
+            # We round it to 4 decimal places for a cleaner output
+            confidence_score = round(confidence.item(), 4)
 
-# Instantiate the service so the model loads on server startup
-# plant_disease_model_service = PlantDiseaseModel()
+        # 6. Create the result dictionary
+        prediction = {
+            "disease": predicted_class,
+            "confidence": confidence_score
+        }
+        
+        return prediction
+
+# =====================================================================================
+# === Step 3: Instantiate the Service ===
+# This creates the single, shared instance when Django starts.
+# =====================================================================================
+model_service = ModelService()

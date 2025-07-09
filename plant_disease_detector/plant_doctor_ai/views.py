@@ -7,12 +7,12 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Avg, Count
 from django.db import transaction
 
-# Import your services and models
 from .services.model_service import model_service
 from .services.gemini_service import gemini_service
 from .models import AnalysisResult
 from users.models import User
-from .serializers import AnalysisResultSerializer
+from .serializers import AnalysisResultSerializer, ChatbotRequestSerializer
+import logging
 
 def infer_severity(confidence):
     """
@@ -101,7 +101,6 @@ class AnalysisHistoryView(ListAPIView):
     serializer_class = AnalysisResultSerializer
 
     def get_queryset(self):
-        # Return results only for the currently logged-in user
         return AnalysisResult.objects.filter(user=self.request.user)
 
 
@@ -115,15 +114,12 @@ class AnalyticsDashboardView(APIView):
         user = request.user
         queryset = AnalysisResult.objects.filter(user=user)
 
-        # Basic Stats
         total_uploads = user.total_uploads
         total_analyzed = queryset.count()
 
-        # Aggregated Stats
         avg_confidence_data = queryset.aggregate(avg_conf=Avg('confidence'))
         avg_confidence = avg_confidence_data['avg_conf'] or 0
 
-        # Distribution Stats
         disease_distribution = list(
             queryset.values('disease_name')
             .annotate(count=Count('disease_name'))
@@ -136,7 +132,6 @@ class AnalyticsDashboardView(APIView):
             .order_by('-count')
         )
 
-        # Format for UI
         formatted_disease_dist = [
             {"name": item['disease_name'].replace('___', ' ').replace('_', ' '), "value": item['count']}
             for item in disease_distribution
@@ -159,3 +154,26 @@ class AnalyticsDashboardView(APIView):
         }
 
         return Response(dashboard_data, status=status.HTTP_200_OK)
+    
+class ChatbotView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = ChatbotRequestSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        validated_data = serializer.validated_data
+        history = validated_data.get('history')
+        new_message = validated_data.get('newMessage')
+
+        try:
+            language = request.headers.get('Language')
+            ai_response = gemini_service.process_chat(history, new_message, language=language)
+            return Response({"response": ai_response}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {"error": "An unexpected error occurred. We are unable to process your request at this time."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

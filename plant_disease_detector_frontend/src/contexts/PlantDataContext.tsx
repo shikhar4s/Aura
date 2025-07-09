@@ -64,7 +64,6 @@ export const PlantDataProvider: React.FC<PlantDataProviderProps> = ({ children }
       img.id === id ? { ...img, result } : img
     ));
     
-    // Update selected image if it's the one being updated
     setSelectedImage(prev => 
       prev?.id === id ? { ...prev, result } : prev
     );

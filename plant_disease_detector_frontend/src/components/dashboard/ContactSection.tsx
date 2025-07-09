@@ -9,25 +9,25 @@ const ContactSection = () => {
     {
       name: 'Shikhar Shrivastava',
       contact: '9340143366',
-      role: 'Lead Developer',
+      role: 'B.Tech AIML',
       avatar: 'SS'
     },
     {
       name: 'Rishabh Uke',
       contact: '9630979187',
-      role: 'AI Specialist',
+      role: 'B.Tech AIML',
       avatar: 'RU'
     },
     {
       name: 'Ananya Jain',
       contact: '6265383328',
-      role: 'Frontend Developer',
+      role: 'B.Tech IT',
       avatar: 'AJ'
     },
     {
       name: 'Akshata Lokhande',
       contact: '7489964656',
-      role: 'Backend Developer',
+      role: 'B.Tech IT',
       avatar: 'AL'
     }
   ];
@@ -112,7 +112,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Email</p>
-                  <p className="text-sm font-medium text-gray-800">team@plantdoc.ai</p>
+                  <p className="text-sm font-medium text-gray-800">shikharshrivastava1980@gmail.com</p>
                 </div>
               </div>
               
@@ -145,7 +145,7 @@ const ContactSection = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-blue-600">Technology:</span>
-                <span className="text-blue-800 font-medium">React + AI</span>
+                <span className="text-blue-800 font-medium">React + AI + Django</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-blue-600">Status:</span>

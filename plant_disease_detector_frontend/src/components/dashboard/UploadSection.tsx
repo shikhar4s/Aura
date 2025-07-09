@@ -7,17 +7,11 @@ import ResultCard from './ResultCard';
 import ResultModal from './ResultModal';
 import { useAppContext } from '../../contexts/AppContext';
 
-// --- Placeholder for your Authentication Context ---
-// In your real application, you would import this from your auth context file.
-// It's needed because the API requires an authenticated user.
+
 const useAuth = () => {
-  // In a real app, this would get the token from localStorage, cookies, or context state.
-  // For demonstration, we'll hardcode a token.
-  // IMPORTANT: Replace this with your actual token retrieval logic.
-  const token = localStorage.getItem('access_token'); // e.g., "9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b"
+  const token = localStorage.getItem('access_token');
   return { token };
 };
-// ---------------------------------------------------
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
@@ -30,7 +24,7 @@ const UploadSection = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const { addImage, updateImageResult, selectedImage } = usePlantData();
-  const { token } = useAuth(); // Get the user's auth token
+  const { token } = useAuth();
   const { language } = useAppContext();
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -70,11 +64,9 @@ const UploadSection = () => {
     }
 
     const file = imageFiles[0];
-    // We now pass the file object directly to the analysis function
     analyzeImage(file);
   };
 
-  // This function now handles the API call
   const analyzeImage = async (file: File) => {
     if (!token) {
         toast.error("You must be logged in to analyze an image.");

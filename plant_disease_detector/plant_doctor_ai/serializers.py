@@ -4,8 +4,6 @@ from .models import AnalysisResult
 from users.models import User
 
 class AnalysisResultSerializer(serializers.ModelSerializer):
-    # Use SerializerMethodField to match the exact keys expected by the frontend
-    # This is for the 'Upload History' page image
     image_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -20,3 +18,27 @@ class AnalysisResultSerializer(serializers.ModelSerializer):
         if obj.image and hasattr(obj.image, 'url'):
             return request.build_absolute_uri(obj.image.url)
         return None
+    
+class ChatPartSerializer(serializers.Serializer):
+    text = serializers.CharField(allow_blank=False)
+
+class ChatHistoryItemSerializer(serializers.Serializer):
+    role = serializers.ChoiceField(choices=['user', 'model'])
+    parts = serializers.ListField(
+        child=ChatPartSerializer(),
+        min_length=1,
+        max_length=1
+    )
+
+class ChatbotRequestSerializer(serializers.Serializer):
+    history = ChatHistoryItemSerializer(
+        many=True,
+        required=False,
+        allow_empty=True,
+        default=list
+    )
+    newMessage = serializers.CharField(
+        max_length=4096,
+        allow_blank=False,
+        trim_whitespace=True
+    )

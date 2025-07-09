@@ -17,6 +17,7 @@ __pycache__/
 .venv/
 venv/
 plant_disease_detector/.env
+plant_disease_detector/*.env
 # VS Code
 .vscode/
 
